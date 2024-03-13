@@ -1,0 +1,36 @@
+body {
+    background-color: #d4d3d3;
+}
+#form {
+    background-color: #ffffff;
+    margin: 120px auto;
+    width: 15%;
+    padding: 50px;
+    box-shadow: 10px 10px 5px #B51934;
+    border-radius: 6px;
+}
+#btn {
+    background-color: #B51934;
+    color: #ffffff;
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-size: large;
+}
+@media screen and (max-width: 700px){
+    #form {
+        width: 65%;
+        padding: 40px;
+        
+    }
+    
+}
+#form2 {
+    background-color: #ffffff;
+    margin: 120px auto;
+    width: 15%;
+    padding: 50px;
+    box-shadow: 10px 10px 5px #B51934;
+    border-radius: 6px;
+}
