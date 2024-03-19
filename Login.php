@@ -1,39 +1,81 @@
 <?php
- //include("config/database_config.php");
+session_start();
+ include("config/database_config.php");
+ $is_invalid = false;
+// Check if the user is already logged in
+if (isset($_SESSION['user_id'])) {
+    // If the user is already logged in, redirect to the dashboard or home page
+    header("Location: welcome.php");
+    exit;
+}
 
-    $is_invalid = false;
-    if($_SERVER["REQUEST_METHOD"] == "POST")
-    {
-        $mysqli=require "config/database_config.php";
-        $sql=sprintf(
-            "SELECT * FROM login WHERE Username='%s' AND Password='%s'",
-            $mysqli->real_escape_string($_POST["Username"]),
-            $mysqli->real_escape_string($_POST["Password"])
-        );
-        $result=$mysqli->query($sql);
+ //check if the form is submitted
+ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["Email"]) && isset($_POST["password"])) {
+    $email = $_POST["Email"];
+    $password = $_POST["password"];
 
-        $user=$result->fetch_assoc();
-
-        if($user)
-        {
-           if(password_verify($_POST['Password'], $user['Password_hash']))
-           {
-                session_start();
-                $_SESSION['user']=$user['Username'];
-           
-           
-               header("Location: welcome.php");
-               exit;
-           }
+    // Fetch user data from database
+    $query = "SELECT * FROM users WHERE Email = '$email'";
+    $result = mysqli_query($mysqli, $query);
+    if (mysqli_num_rows($result) == 1) {
+        $user = mysqli_fetch_assoc($result);
+        // Verify password
+        if (isset($user['password']) && password_verify($password, $user['password'])) {
+            // Password is correct, set session variables
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['username'] = $user['username'];
+            // Redirect to welcome page
+            header("Location: welcome.php");
+            exit;
+        } else {
+            echo "Invalid password!";
         }
-           
-               $is_invalid=true;
+    } else {
+        echo "User not found!";
     }
+} else{
+        header("Location: Login.php");
+        exit;
+    }
+    
+    $is_invalid=true;
+    mysqli_close($mysqli);
+?>
+
+    <!-- // $is_invalid = false;
+    // if($_SERVER["REQUEST_METHOD"] === "POST")
+    // {
+    //     $mysqli=require "config/database_config.php";
+    //     $sql=sprintf(
+    //         "SELECT * FROM login WHERE Username='%s' AND password_hash='%s'",
+    //         $mysqli->real_escape_string($_POST["Username"]),
+    //         $mysqli->real_escape_string($_POST["Password"])
+    //     );
+    //     $result=$mysqli->query($sql);
+
+    //     $user=$result->fetch_assoc();
+
+    //     if($user)
+    //     {
+    //        if(password_verify($_POST['Password'], $user['password_hash']))
+    //        {
+    //             session_start();
+    //             session_regenerate_id();
+    //             $_SESSION['user']=$user['Username'];
+           
+           
+    //            header("Location: welcome.php");
+    //            exit;
+    //        }
+    //     }
+           
+    //            $is_invalid=true;
+    // }
           
-?>  
+?>   -->
 
         
-    // if(isset($_POST['Username']) && isset($_POST['Password']))
+    <!-- // if(isset($_POST['Username']) && isset($_POST['Password']))
     // {
     //     $Username=$_POST['Username'];
     //     $Password=$_POST['Password'];
@@ -53,7 +95,7 @@
     //             alert("Login Failed. Invalid Username or Password")
     //         </script>';
     //     }
-    // }
+    // } -->
 
 
 
@@ -69,25 +111,28 @@
     <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
-    <?php if ($is_invalid) : ?>
-        <em>Invalid login</em>
-    <?php endif;  ?>
+    
+        <?php if ($is_invalid) : ?>
+            <em>Invalid login</em>
+          <?php endif;  ?>
+    
 
     
     <div id="form">
     <h1>Login</h1>
         <form method="POST" action="Login.php" onsubmit="return isvalid()" novalidate>
         <div>
-            <label for="Username">Enter Username:</label>
-            <input type="text" id="Username" name="Username" required><br><br>
+            <label for="Email">Enter Email:</label>
+            <input type="Email" id="Email" name="Email" value="<?=htmlspecialchars($_POST["Username"] ?? "")?>" required><br><br>
             </div>
             <div>
             <label for="Password">Enter Password:</label>
-            <input type="Password" id="Password" name="Password" required><br><br>
+            <input type="password" id="password" name="password" required><br><br>
             </div>
             <div>
-            <input type="submit" id="btn" value="Login">
+            <input type="submit" id="btn" value="Login"><br><br>
             </div>
+            <a href="Registration.php">Click to Register</a>
         </form>
     </div>
     <script>

@@ -1,42 +1,45 @@
 <?php
+session_start();    
+
 include("config/database_config.php");
 
-   if ($_SERVER["REQUEST_METHOD"] === "POST") {
+
+//check if the form is submitted
+   if ($_SERVER["REQUEST_METHOD"] === "POST") 
+   {
    
        $Username=$_POST['Username'];
        $Email=$_POST['Email'];
-       $Password=$_POST['Password'];
-       $Confirm_Password=$_POST['Confirm_Password'];
+       $Password=$_POST['password_hash'];
+       $Confirm_Password=$_POST['Confirm Password'];
+           //check if password and confirm password match
+         if($Password !== $Confirm_Password){
+              echo "Passwords do not match";
+              exit;
+         }
+         
+        // Check if email is already registered
+        $query = "SELECT * FROM users WHERE Email = '$Email'";
+        $result = mysqli_query($mysqli, $query);
+        if (mysqli_num_rows($result) > 0) {
+            echo "Email is already registered!";
+            exit;
+        }
+            // Hash password
+            $hashed_password = password_hash($Password, PASSWORD_DEFAULT);
 
-       if(
-        !empty($Username) && !empty($Email) && !empty($Password) && !empty($Confirm_Password) && !is_numeric($Username))
-       
-       {
-        "INSERT INTO registration (Username, Email, Password, Confirm_Password) VALUES ('$Username', '$Email', '$Password', '$Confirm_Password')"
-            mysqli_query($query);
+            // Insert user data into database
+            $query = "INSERT INTO users (Username, Email, password_hash) VALUES ('$Username', '$Email', '$hashed_password')";
+            if (mysqli_query($mysqli, $query)) {
+                echo "User registered successfully!";
+            } else {
+                echo "Error: " . $query . "<br>" . mysqli_error($mysqli);
+            }
+
+            mysqli_close($mysqli);
             header("Location: Login.php");
-            die;
-       }else{
-          header("Location: Registration.php");   
-        echo "Please enter valid information in all the fields";
-       }
-
-
-   
-    //    $sql = sprintf(
-    //        "SELECT * FROM Info WHERE email = '%s'",
-    //        $mysqli->real_escape_string($_POST["email"])
-    //    );
-   
-    //    $result = $mysqli->query($sql);
-   
-    //    $user = $result->fetch_assoc();
-   
-    //    var_dump($user);
-    //    exit;
-   }
-   
-   
+            exit;
+    }       
 ?>
 
 
@@ -66,11 +69,12 @@ include("config/database_config.php");
             </div>  
             <div>
                 <label for="Confirm Password">Confirm_Password:</label>
-                <input type="Password" id="Confirm Password" name="Confirm  Password" required> <br><br>
+                <input type="Password" id="Confirm Password" name="Confirm Password" required> <br><br>
             </div>
             <div>
-            <input type="submit" id="btn" value="Register">
+            <input type="submit" id="btn" value="SignUp"><br><br>
         </div>
+        <a href="Login.php">Click to Login</a>
         </form>
     </body>
 </html>
