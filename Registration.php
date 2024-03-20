@@ -10,7 +10,7 @@ include("config/database_config.php");
    
        $Username=$_POST['Username'];
        $Email=$_POST['Email'];
-       $Password=$_POST['password_hash'];
+       $Password=$_POST['password'];
        $Confirm_Password=$_POST['Confirm Password'];
            //check if password and confirm password match
          if($Password !== $Confirm_Password){
@@ -29,7 +29,7 @@ include("config/database_config.php");
             $hashed_password = password_hash($Password, PASSWORD_DEFAULT);
 
             // Insert user data into database
-            $query = "INSERT INTO users (Username, Email, password_hash) VALUES ('$Username', '$Email', '$hashed_password')";
+            $query = "INSERT INTO users (Username, Email, password) VALUES ('$Username', '$Email', '$hashed_password')";
             if (mysqli_query($mysqli, $query)) {
                 echo "User registered successfully!";
             } else {
@@ -65,7 +65,7 @@ include("config/database_config.php");
             </div>
             <div>
                 <label for="Password">Enter Password:</label>
-                <input type="Password" id="Password" name="Password" required><br><br>
+                <input type="password" id="password" name="password" required><br><br>
             </div>  
             <div>
                 <label for="Confirm Password">Confirm_Password:</label>

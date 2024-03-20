@@ -1,102 +1,77 @@
 <?php
 session_start();
- include("config/database_config.php");
- $is_invalid = false;
+//  include("config/database_config.php");
+//  $is_invalid = false;
 // Check if the user is already logged in
 if (isset($_SESSION['user_id'])) {
     // If the user is already logged in, redirect to the dashboard or home page
     header("Location: welcome.php");
     exit;
-}
+ }
 
- //check if the form is submitted
- if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["Email"]) && isset($_POST["password"])) {
-    $email = $_POST["Email"];
-    $password = $_POST["password"];
+//  //check if the form is submitted
+//  if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["Email"]) && isset($_POST["password"])) {
+//     $email = $_POST["Email"];
+//     $password = $_POST["password"];
 
-    // Fetch user data from database
-    $query = "SELECT * FROM users WHERE Email = '$email'";
-    $result = mysqli_query($mysqli, $query);
-    if (mysqli_num_rows($result) == 1) {
-        $user = mysqli_fetch_assoc($result);
-        // Verify password
-        if (isset($user['password']) && password_verify($password, $user['password'])) {
-            // Password is correct, set session variables
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['username'] = $user['username'];
-            // Redirect to welcome page
-            header("Location: welcome.php");
-            exit;
-        } else {
-            echo "Invalid password!";
-        }
-    } else {
-        echo "User not found!";
-    }
-} else{
-        header("Location: Login.php");
-        exit;
-    }
+//     // Fetch user data from database
+//     $query = "SELECT * FROM users WHERE Username = '$email' and password='$password'";
+//     $result = mysqli_query($mysqli, $query);
+//     if (mysqli_num_rows($result) == 1) {
+//         $user = mysqli_fetch_assoc($result);
+//         // Verify password
+//         if (isset($user['password']) && password_verify($password, $user['password'])) {
+//             // Password is correct, set session variables
+//             $_SESSION['user_id'] = $user['id'];
+//             $_SESSION['username'] = $user['username'];
+//             // Redirect to welcome page
+//             header("Location: welcome.php");
+//             exit;
+//         } else {
+//             echo "Invalid password!";
+//         }
+//     } else {
+//         echo "User not found!";
+//     }
+// } else{
+//         header("Location: Login.php");
+//         exit;
+//     }
     
-    $is_invalid=true;
-    mysqli_close($mysqli);
-?>
+//     $is_invalid=true;
+//     mysqli_close($mysqli);
 
-    <!-- // $is_invalid = false;
-    // if($_SERVER["REQUEST_METHOD"] === "POST")
-    // {
-    //     $mysqli=require "config/database_config.php";
-    //     $sql=sprintf(
-    //         "SELECT * FROM login WHERE Username='%s' AND password_hash='%s'",
-    //         $mysqli->real_escape_string($_POST["Username"]),
-    //         $mysqli->real_escape_string($_POST["Password"])
-    //     );
-    //     $result=$mysqli->query($sql);
+     $is_invalid = false;
+     if($_SERVER["REQUEST_METHOD"] === "POST")
+     {
+         $mysqli=require "config/database_config.php";
+         $sql=sprintf(
+             "SELECT * FROM users WHERE Email='%s' AND password='%s'",
+         $mysqli->real_escape_string($_POST["Email"]),
+             $mysqli->real_escape_string($_POST["password"])
+         );
+         $result=$mysqli->query($sql);
 
-    //     $user=$result->fetch_assoc();
+         $user=$result->fetch_assoc();
 
-    //     if($user)
-    //     {
-    //        if(password_verify($_POST['Password'], $user['password_hash']))
-    //        {
-    //             session_start();
-    //             session_regenerate_id();
-    //             $_SESSION['user']=$user['Username'];
+         if($user)
+         {
+            if(password_verify($_POST['password'], $user['password']))
+            {
+                 session_start();
+                 session_regenerate_id();
+                 $_SESSION['user']=$user['Email'];
            
            
-    //            header("Location: welcome.php");
-    //            exit;
-    //        }
-    //     }
+              header("Location: welcome.php");
+                exit;
+            }
+         }
            
-    //            $is_invalid=true;
-    // }
+                $is_invalid=true;
+     }
           
-?>   -->
-
-        
-    <!-- // if(isset($_POST['Username']) && isset($_POST['Password']))
-    // {
-    //     $Username=$_POST['Username'];
-    //     $Password=$_POST['Password'];
-    //     $sql="SELECT * FROM login WHERE Username='$Username' AND Password='$Password'";
-    //     $result=$mysqli->query($sql);
-    //     $row=mysqli_fetch_array($result, MYSQLI_ASSOC);
-    //     $count=mysqli_num_rows($result);
-    //     if($count==1)
-    //     {
-    //         header("Location: welcome.php"); //redirect to file "welcome.php"
-    //         die;
-    //     }
-    //     else
-    //     {
-    //         echo '<script> 
-    //             window.location="Login.php";
-    //             alert("Login Failed. Invalid Username or Password")
-    //         </script>';
-    //     }
-    // } -->
-
+?>   
 
 
 
