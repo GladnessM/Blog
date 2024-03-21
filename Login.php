@@ -41,26 +41,26 @@ if (isset($_SESSION['user_id'])) {
 //     $is_invalid=true;
 //     mysqli_close($mysqli);
 
-     $is_invalid = false;
-     if($_SERVER["REQUEST_METHOD"] === "POST")
+     $is_invalid = false; 
+     if($_SERVER["REQUEST_METHOD"] === "POST") //check if the form is submitted
      {
          $mysqli=require "config/database_config.php";
          $sql=sprintf(
-             "SELECT * FROM users WHERE Email='%s' AND password='%s'",
-         $mysqli->real_escape_string($_POST["Email"]),
+             "SELECT * FROM users WHERE Email='%s' AND password='%s'", //fetch user data from database
+         $mysqli->real_escape_string($_POST["Email"]), 
              $mysqli->real_escape_string($_POST["password"])
          );
          $result=$mysqli->query($sql);
 
-         $user=$result->fetch_assoc();
+         $user=$result->fetch_assoc(); 
 
-         if($user)
+         if($user) //if user is found
          {
-            if(password_verify($_POST['password'], $user['password']))
+            if(password_verify($_POST['password'], $user['password'])) //if password is correct
             {
-                 session_start();
-                 session_regenerate_id();
-                 $_SESSION['user']=$user['Email'];
+                 session_start(); 
+                 session_regenerate_id(); 
+                 $_SESSION['user']=$user['Email']; 
            
            
               header("Location: welcome.php");
@@ -84,8 +84,15 @@ if (isset($_SESSION['user_id'])) {
 
     <title>Login</title>
     <link rel="stylesheet" type="text/css" href="style.css">
+    <script>
+        // Function to clear input fields
+        function clearFields() {
+            document.getElementById("Email").value = "";
+            document.getElementById("password").value = "";
+        }
+    </script>
 </head>
-<body>
+<body onload="clearFields()">
     
         <?php if ($is_invalid) : ?>
             <em>Invalid login</em>
@@ -95,14 +102,14 @@ if (isset($_SESSION['user_id'])) {
     
     <div id="form">
     <h1>Login</h1>
-        <form method="POST" action="Login.php" onsubmit="return isvalid()" novalidate>
+        <form method="POST" action="Login.php" onsubmit="return isvalid()" novalidate >
         <div>
             <label for="Email">Enter Email:</label>
-            <input type="Email" id="Email" name="Email" value="<?=htmlspecialchars($_POST["Username"] ?? "")?>" required><br><br>
+            <input type="Email" id="Email" name="Email" value="<?=htmlspecialchars($_POST["Username"] ?? "")?>" required autocomplete="off"><br><br>
             </div>
             <div>
             <label for="Password">Enter Password:</label>
-            <input type="password" id="password" name="password" required><br><br>
+            <input type="password" id="password" name="password" required autocomplete="off"><br><br>
             </div>
             <div>
             <input type="submit" id="btn" value="Login"><br><br>
