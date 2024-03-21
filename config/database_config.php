@@ -6,10 +6,10 @@
     $password = "";
 
     $mysqli= new mysqli(
-        hostname:$host,
-        database:$dbname,
-        username:$username,
-        password:$password
+        $host,
+        $username,
+        $password,
+        $dbname
     );
 
     if($mysqli->connect_error)
